@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lyceum &mdash; Student Registration Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2430;
+    --paper:#f3ede0;
+    --paper-2:#e9e0cd;
+    --rule:#c9bd9e;
+    --brass:#9c7a3c;
+    --brass-deep:#7a5e2b;
+    --card:#fffdf6;
+    --shadow: rgba(28,36,48,0.18);
+    --success:#3d6b4c;
+    --error:#a3352d;
+  }
+  [data-theme="dark"]{
+    --ink:#ece6d6;
+    --paper:#14181f;
+    --paper-2:#1c222c;
+    --rule:#3a4351;
+    --brass:#d1a85c;
+    --brass-deep:#e8c27f;
+    --card:#1b2129;
+    --shadow: rgba(0,0,0,0.45);
+    --success:#7cc496;
+    --error:#e07a72;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    transition:background .4s ease, color .4s ease;
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; margin:0; }
+  .mono{ font-family:'Space Mono', monospace; }
+  a{ color:inherit; }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 5%;
+    background:var(--paper);
+    border-bottom:1px solid var(--rule);
+    transition:background .4s ease, border-color .4s ease;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:34px; height:34px; border:1.5px solid var(--brass);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:700; color:var(--brass-deep);
+    border-radius:50%;
+  }
+  .brand-name{ font-size:1.15rem; font-weight:600; letter-spacing:.5px; }
+  .nav-links{ list-style:none; display:flex; gap:34px; margin:0; padding:0; }
+  .nav-links a{
+    text-decoration:none; font-size:.82rem; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--ink); position:relative; padding-bottom:4px; cursor:pointer;
+  }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--brass-deep);
+    transition:width .25s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+  .theme-btn{
+    border:1px solid var(--brass); background:transparent; color:var(--ink);
+    padding:9px 18px; font-family:'Space Mono', monospace; font-size:.75rem;
+    letter-spacing:1px; cursor:pointer; border-radius:2px;
+    transition:background .25s ease, color .25s ease;
+  }
+  .theme-btn:hover{ background:var(--brass-deep); color:var(--paper); }
+  .nav-toggle{ display:none; }
+
+  section{ padding:90px 5%; max-width:1180px; margin:0 auto; }
+
+  /* ---------- HOME ---------- */
+  .hero{
+    display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:center;
+    min-height:70vh;
+  }
+  .eyebrow{
+    font-family:'Space Mono', monospace; font-size:.72rem; letter-spacing:3px;
+    text-transform:uppercase; color:var(--brass-deep); display:inline-block; margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 4rem); line-height:1.05; font-weight:600;
+    display:none; /* revealed by fadeIn() */
+  }
+  .hero p.desc{
+    margin-top:22px; font-size:1.05rem; line-height:1.7; color:var(--ink); max-width:46ch; opacity:.85;
+  }
+  .hero-banner{
+    display:none; /* revealed by slideDown() */
+    border:1px solid var(--rule);
+    background:
+      repeating-linear-gradient(0deg, var(--card), var(--card) 27px, var(--rule) 28px);
+    aspect-ratio:4/5;
+    position:relative; overflow:hidden;
+    box-shadow:0 18px 40px var(--shadow);
+  }
+  .hero-banner::before{
+    content:"LEDGER No. 07"; position:absolute; top:16px; left:16px;
+    font-family:'Space Mono', monospace; font-size:.7rem; letter-spacing:2px; color:var(--brass-deep);
+  }
+  .hero-banner .plate{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; text-align:center; gap:8px; padding:20px;
+  }
+  .plate-num{ font-family:'Fraunces', serif; font-size:5rem; color:var(--brass); opacity:.9; }
+  .plate-cap{ font-family:'Space Mono', monospace; font-size:.75rem; letter-spacing:2px; text-transform:uppercase; }
+
+  /* ---------- SECTION HEADS ---------- */
+  .section-head{ margin-bottom:48px; }
+  .section-head .index{ font-family:'Space Mono', monospace; color:var(--brass-deep); font-size:.8rem; letter-spacing:2px; }
+  .section-head h2{ font-size:2.2rem; margin-top:8px; }
+  .rule{ height:1px; background:var(--rule); border:none; margin:14px 0 0; width:64px; background-color:var(--brass-deep); }
+
+  /* ---------- COURSES ---------- */
+  .course-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:26px; }
+  .card{
+    background:var(--card); border:1px solid var(--rule); padding:30px 26px;
+    display:flex; flex-direction:column; gap:14px;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 16px 30px var(--shadow); }
+  .card .tag{ font-family:'Space Mono', monospace; font-size:.7rem; letter-spacing:1.5px; color:var(--brass-deep); }
+  .card h3{ font-size:1.4rem; }
+  .card .short{ font-size:.9rem; opacity:.8; line-height:1.6; }
+  .card .full-desc{ display:none; font-size:.88rem; line-height:1.7; opacity:.85; border-top:1px dashed var(--rule); padding-top:14px; }
+  .read-more{
+    align-self:flex-start; margin-top:auto; border:none; background:none; cursor:pointer;
+    font-family:'Space Mono', monospace; font-size:.75rem; letter-spacing:1px; color:var(--brass-deep);
+    padding:8px 0; border-bottom:1px solid var(--brass-deep);
+  }
+
+  /* ---------- REGISTRATION ---------- */
+  .reg-wrap{ display:grid; grid-template-columns:.9fr 1.1fr; gap:60px; }
+  .reg-note h3{ font-size:1.6rem; margin-bottom:14px; }
+  .reg-note p{ opacity:.8; line-height:1.7; font-size:.95rem; }
+  .reg-note ul{ padding-left:20px; margin-top:20px; font-size:.85rem; opacity:.75; line-height:2; }
+
+  form#regForm{ background:var(--card); border:1px solid var(--rule); padding:36px; display:flex; flex-direction:column; gap:20px; }
+  .field{ display:flex; flex-direction:column; gap:6px; position:relative; }
+  .field label{ font-size:.75rem; letter-spacing:1px; text-transform:uppercase; font-family:'Space Mono', monospace; opacity:.8; }
+  .field input, .field select{
+    border:none; border-bottom:1.5px solid var(--rule); background:transparent; color:var(--ink);
+    padding:10px 2px; font-size:1rem; font-family:'Inter', sans-serif; outline:none;
+    transition:border-color .2s ease;
+  }
+  .field input:focus, .field select:focus{ border-color:var(--brass-deep); }
+  .field .err-msg{ font-size:.75rem; color:var(--error); min-height:14px; }
+  .field.valid input{ border-color:var(--success); }
+  .field.invalid input{ border-color:var(--error); }
+
+  .submit-btn{
+    margin-top:6px; align-self:flex-start; background:var(--brass-deep); color:var(--paper);
+    border:none; padding:14px 34px; font-family:'Space Mono', monospace; letter-spacing:1.5px;
+    font-size:.8rem; text-transform:uppercase; cursor:pointer; transition:opacity .2s ease;
+  }
+  .submit-btn:hover{ opacity:.85; }
+
+  #successMsg{
+    display:none; margin-top:18px; padding:14px 18px; border:1px solid var(--success);
+    color:var(--success); font-family:'Space Mono', monospace; font-size:.85rem;
+  }
+
+  /* ---------- RECORDS ---------- */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--rule); }
+  table{ width:100%; border-collapse:collapse; min-width:560px; }
+  thead{ background:var(--paper-2); }
+  th, td{ text-align:left; padding:16px 20px; font-size:.88rem; border-bottom:1px solid var(--rule); }
+  th{ font-family:'Space Mono', monospace; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--brass-deep); }
+  tbody tr{ background:var(--card); }
+  .delete-btn{
+    border:1px solid var(--error); color:var(--error); background:none; padding:6px 14px;
+    font-family:'Space Mono', monospace; font-size:.7rem; letter-spacing:1px; cursor:pointer;
+  }
+  .delete-btn:hover{ background:var(--error); color:var(--paper); }
+  .empty-row td{ text-align:center; opacity:.5; font-style:italic; padding:34px; }
+
+  footer{ text-align:center; padding:40px 5%; font-family:'Space Mono', monospace; font-size:.72rem; letter-spacing:1px; opacity:.5; }
+
+  @media (max-width:860px){
+    .hero{ grid-template-columns:1fr; }
+    .reg-wrap{ grid-template-columns:1fr; }
+    .course-grid{ grid-template-columns:1fr; }
+    .nav-links{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="brand">
+    <div class="brand-mark">L</div>
+    <span class="brand-name">LYCEUM</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#registration">Registration</a></li>
+    <li><a href="#records">Student Records</a></li>
+  </ul>
+  <button class="theme-btn" id="themeToggle">☾ CHANGE THEME</button>
+</nav>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Est. Registrar's Office</span>
+      <h1 id="heroHeading">Lyceum Institute of<br>Applied Web Craft</h1>
+      <p class="desc">A small institute for people who want to actually build things. Learn the fundamentals of the web &mdash; markup, logic, and interaction &mdash; and register below to secure your place in the next cohort.</p>
+    </div>
+    <div class="hero-banner" id="heroBanner">
+      <div class="plate">
+        <span class="plate-num">03</span>
+        <span class="plate-cap">Courses Open for Enrolment</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+  <div class="section-head">
+    <span class="index">Index / 01</span>
+    <h2>Courses on Offer</h2>
+    <hr class="rule">
+  </div>
+  <div class="course-grid">
+    <div class="card">
+      <span class="tag">FOUNDATION</span>
+      <h3>HTML &amp; CSS</h3>
+      <p class="short">The structure and skin of every website you have ever visited.</p>
+      <p class="full-desc">Covers semantic markup, the box model, flexbox and grid layout, responsive design, and how to turn a static design into a real page that holds up on any screen.</p>
+      <button class="read-more">Read More</button>
+    </div>
+    <div class="card">
+      <span class="tag">LOGIC</span>
+      <h3>JavaScript</h3>
+      <p class="short">Give your pages memory, behaviour, and the ability to react.</p>
+      <p class="full-desc">Covers variables, functions, the DOM, events, and asynchronous code, building toward small interactive applications you can reason about and extend.</p>
+      <button class="read-more">Read More</button>
+    </div>
+    <div class="card">
+      <span class="tag">TOOLKIT</span>
+      <h3>jQuery</h3>
+      <p class="short">A faster, calmer way to move the DOM around.</p>
+      <p class="full-desc">Covers selectors, event handling, effects like fadeIn and slideDown, form validation, and dynamic content insertion &mdash; the exact toolkit this very page is built with.</p>
+      <button class="read-more">Read More</button>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTRATION -->
+<section id="registration">
+  <div class="section-head">
+    <span class="index">Index / 02</span>
+    <h2>Student Registration</h2>
+    <hr class="rule">
+  </div>
+  <div class="reg-wrap">
+    <div class="reg-note">
+      <h3>Before you begin</h3>
+      <p>Fill in the form with accurate details. Fields are checked as you type, so you will know immediately if something needs fixing &mdash; no surprises at the end.</p>
+      <ul>
+        <li>Full name &mdash; letters and spaces only</li>
+        <li>Email &mdash; a valid address, required</li>
+        <li>Phone &mdash; exactly 11 digits</li>
+        <li>Password &mdash; minimum 8 characters</li>
+      </ul>
+    </div>
+    <form id="regForm" novalidate>
+      <div class="field" id="nameField">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" placeholder="e.g. Ali Raza">
+        <span class="err-msg" id="nameErr"></span>
+      </div>
+      <div class="field" id="emailField">
+        <label for="email">Email Address</label>
+        <input type="text" id="email" name="email" placeholder="e.g. ali@gmail.com">
+        <span class="err-msg" id="emailErr"></span>
+      </div>
+      <div class="field" id="phoneField">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone" placeholder="11 digits, e.g. 03001234567">
+        <span class="err-msg" id="phoneErr"></span>
+      </div>
+      <div class="field">
+        <label for="course">Course</label>
+        <select id="course" name="course">
+          <option value="HTML & CSS">HTML &amp; CSS</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="jQuery">jQuery</option>
+        </select>
+      </div>
+      <div class="field" id="passField">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Minimum 8 characters">
+        <span class="err-msg" id="passErr"></span>
+      </div>
+      <div class="field" id="confirmField">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password">
+        <span class="err-msg" id="confirmErr"></span>
+      </div>
+      <button type="submit" class="submit-btn">Register</button>
+      <div id="successMsg">✓ Registration Successful &mdash; your record has been added below.</div>
+    </form>
+  </div>
+</section>
+
+<!-- STUDENT RECORDS -->
+<section id="records">
+  <div class="section-head">
+    <span class="index">Index / 03</span>
+    <h2>Student Records</h2>
+    <hr class="rule">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Course</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        <tr class="empty-row" id="emptyRow">
+          <td colspan="4">No students registered yet. Fill the form above to add the first record.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>LYCEUM INSTITUTE &mdash; REGISTRAR'S PORTAL &mdash; BUILT WITH jQuery</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+$(function () {
+
+  /* ---------- 1. THEME ---------- */
+  $('#themeToggle').on('click', function () {
+    var isDark = $('html').attr('data-theme') === 'dark';
+    if (isDark) {
+      $('html').removeAttr('data-theme');
+      $(this).text('☾ CHANGE THEME');
+    } else {
+      $('html').attr('data-theme', 'dark');
+      $(this).text('☀ CHANGE THEME');
+    }
+    // toggleClass alternative also demonstrated on body for flexibility
+    $('body').toggleClass('theme-dark', !isDark);
+  });
+
+  /* ---------- 2. HOME LOAD ANIMATIONS ---------- */
+  $('#heroHeading').css('display', 'none').fadeIn(1000);
+  $('#heroBanner').css('display', 'none').slideDown(900);
+
+  /* ---------- 3. NAV LINKS SMOOTH SCROLL ---------- */
+  $('.nav-links a').on('click', function (e) {
+    e.preventDefault();
+    var target = $($(this).attr('href'));
+    if (target.length) {
+      $('html, body').animate({ scrollTop: target.offset().top - 70 }, 500);
+    }
+  });
+
+  /* ---------- 4. COURSE READ MORE TOGGLE ---------- */
+  $('.read-more').on('click', function () {
+    $(this).siblings('.full-desc').toggle(300);
+    var expanded = $(this).siblings('.full-desc').is(':visible');
+    $(this).text(expanded ? 'Show Less' : 'Read More');
+  });
+
+  /* ---------- 5. VALIDATION HELPERS ---------- */
+  function setFieldState($field, $err, valid, message) {
+    if (valid) {
+      $field.removeClass('invalid').addClass('valid');
+      $err.text('');
+    } else {
+      $field.removeClass('valid').addClass('invalid');
+      $err.text(message);
+    }
+    return valid;
+  }
+
+  function validateName() {
+    var val = $('#fullName').val().trim();
+    var ok = /^[A-Za-z ]+$/.test(val) && val.length > 0;
+    return setFieldState($('#nameField'), $('#nameErr'), ok,
+      val.length === 0 ? 'Full name is required.' : 'Only alphabets and spaces are allowed.');
+  }
+
+  function validateEmail() {
+    var val = $('#email').val().trim();
+    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    return setFieldState($('#emailField'), $('#emailErr'), ok,
+      val.length === 0 ? 'Email is required.' : 'Enter a valid email address.');
+  }
+
+  function validatePhone() {
+    var val = $('#phone').val().trim();
+    var ok = /^[0-9]{11}$/.test(val);
+    return setFieldState($('#phoneField'), $('#phoneErr'), ok,
+      val.length === 0 ? 'Phone number is required.' :
+      (/^[0-9]*$/.test(val) ? 'Phone number must be exactly 11 digits.' : 'Only numbers are allowed.'));
+  }
+
+  function validatePassword() {
+    var val = $('#password').val();
+    var ok = val.length >= 8;
+    return setFieldState($('#passField'), $('#passErr'), ok, 'Password must be at least 8 characters.');
+  }
+
+  function validateConfirm() {
+    var val = $('#confirmPassword').val();
+    var ok = val.length > 0 && val === $('#password').val();
+    return setFieldState($('#confirmField'), $('#confirmErr'), ok, 'Passwords do not match.');
+  }
+
+  /* ---------- 6. REAL-TIME VALIDATION ---------- */
+  $('#fullName').on('keyup', validateName);
+  $('#email').on('keyup blur', validateEmail);
+  $('#phone').on('keyup', validatePhone);
+  $('#password').on('keyup', function () {
+    validatePassword();
+    if ($('#confirmPassword').val().length > 0) validateConfirm();
+  });
+  $('#confirmPassword').on('keyup blur', validateConfirm);
+
+  $('#fullName, #email, #phone, #password, #confirmPassword').on('blur', function () {
+    // final check on blur in case keyup was skipped (e.g. paste)
+    var id = $(this).attr('id');
+    if (id === 'fullName') validateName();
+    if (id === 'email') validateEmail();
+    if (id === 'phone') validatePhone();
+    if (id === 'password') validatePassword();
+    if (id === 'confirmPassword') validateConfirm();
+  });
+
+  /* ---------- 7. FORM SUBMISSION ---------- */
+  var studentCount = 0;
+
+  $('#regForm').on('submit', function (e) {
+    e.preventDefault();
+
+    var nameOk = validateName();
+    var emailOk = validateEmail();
+    var phoneOk = validatePhone();
+    var passOk = validatePassword();
+    var confirmOk = validateConfirm();
+
+    if (!(nameOk && emailOk && phoneOk && passOk && confirmOk)) {
+      $('#successMsg').hide();
+      return;
+    }
+
+    var name = $('#fullName').val().trim();
+    var email = $('#email').val().trim();
+    var course = $('#course').val();
+    studentCount++;
+
+    // remove the "no students" placeholder row
+    $('#emptyRow').remove();
+
+    var $row = $(
+      '<tr>' +
+        '<td>' + name + '</td>' +
+        '<td>' + email + '</td>' +
+        '<td>' + course + '</td>' +
+        '<td><button type="button" class="delete-btn">Delete</button></td>' +
+      '</tr>'
+    ).css('opacity', 0);
+
+    $('#studentTableBody').append($row);
+    $row.animate({ opacity: 1 }, 400);
+
+    // show success message
+    $('#successMsg').hide().fadeIn(500);
+
+    // reset form and validation states
+    this.reset();
+    $('.field').removeClass('valid invalid');
+    $('.err-msg').text('');
+
+    // scroll to records so the new row is visible
+    setTimeout(function () {
+      $('html, body').animate({ scrollTop: $('#records').offset().top - 70 }, 600);
+    }, 700);
+  });
+
+  /* ---------- 8. DELETE STUDENT RECORD ---------- */
+  $('#studentTableBody').on('click', '.delete-btn', function () {
+    var $row = $(this).closest('tr');
+    $row.fadeOut(400, function () {
+      $(this).remove();
+      if ($('#studentTableBody tr').length === 0) {
+        $('#studentTableBody').append(
+          '<tr class="empty-row" id="emptyRow"><td colspan="4">No students registered yet. Fill the form above to add the first record.</td></tr>'
+        );
+      }
+    });
+  });
+
+});
+</script>
+</body>
+</html>
