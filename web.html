@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shadi Studio — Your Day, Perfectly Composed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    html{
+  scroll-behavior:smooth;
+}
+.reveal{
+  opacity:0;
+  transform:translateY(60px);
+  transition:1s ease;
+}
+
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ivory:   #F9F6F0;
+      --blush:   #D9B8A8;
+      --sage:    #7A8C72;
+      --charcoal:#2C2C2C;
+      --gold:    #B89A6A;
+      --white:   #FFFFFF;
+      --light:   #F3EDE6;
+      --muted:   #9A8E84;
+
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans:  'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--ivory);
+      color: var(--charcoal);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 5vw;
+      background: rgba(249,246,240,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(184,154,106,0.15);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.06); }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: .08em;
+      color: var(--charcoal);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: .82rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .55rem 1.4rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: transparent;
+      text-decoration: none;
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .nav-cta:hover { background: var(--gold); color: var(--white); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--charcoal); transition: all .3s; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 70px;
+    }
+
+    .hero-text {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6rem 5vw 6rem 8vw;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--sans);
+      font-size: .72rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5vw, 5.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--charcoal);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); display: block; }
+
+    .hero-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 400px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      padding: .85rem 2.2rem;
+      background: var(--charcoal);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .82rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .25s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--gold); }
+
+    .btn-ghost {
+      font-size: .82rem;
+      letter-spacing: .08em;
+      color: var(--charcoal);
+      text-decoration: none;
+      border-bottom: 1px solid var(--blush);
+      padding-bottom: .15rem;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-ghost:hover { color: var(--gold); border-color: var(--gold); }
+
+    .hero-visual {
+      position: relative;
+      overflow: hidden;
+      background: var(--light);
+    }
+
+    .hero-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Decorative floral SVG overlay */
+    .hero-floral {
+      position: absolute; bottom: -10px; left: -10px;
+      width: 220px; opacity: .18; pointer-events: none;
+    }
+
+    .hero-badge {
+      position: absolute; bottom: 2.5rem; right: 2.5rem;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    .hero-badge .num {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-badge .lbl {
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0 8vw;
+      margin: 4rem 0 2rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--blush); opacity: .5;
+    }
+    .divider-icon { color: var(--gold); font-size: 1.1rem; }
+
+    /* ── SECTION TITLES ── */
+    .section-label {
+      font-size: .72rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--charcoal);
+    }
+    .section-title em { font-style: italic; }
+
+    /* ── SERVICES ── */
+    #services {
+      padding: 6rem 8vw;
+    }
+    .services-intro {
+      max-width: 540px;
+      margin-bottom: 3.5rem;
+    }
+    .services-intro p {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      background: var(--blush);
+      border: 1.5px solid var(--blush);
+    }
+
+    .service-card {
+      background: var(--ivory);
+      padding: 2.5rem 2rem;
+      position: relative;
+      transition: background .25s;
+      cursor: default;
+    }
+    .service-card:hover { background: var(--charcoal); }
+    .service-card:hover .service-icon,
+    .service-card:hover .service-name,
+    .service-card:hover .service-desc { color: var(--white); }
+    .service-card:hover .service-icon { color: var(--gold); }
+
+    .service-icon { font-size: 1.6rem; margin-bottom: 1.2rem; color: var(--gold); display: block; }
+    .service-name {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin-bottom: .6rem;
+      color: var(--charcoal);
+      transition: color .25s;
+    }
+    .service-desc {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.75;
+      font-weight: 300;
+      transition: color .25s;
+    }
+
+    /* ── TIMELINE ── */
+    #timeline {
+      padding: 6rem 8vw;
+      background: var(--charcoal);
+      color: var(--white);
+    }
+    #timeline .section-title { color: var(--white); }
+    #timeline .section-title em { color: var(--gold); }
+
+    .timeline-intro {
+      max-width: 500px;
+      margin-bottom: 3.5rem;
+    }
+    .timeline-intro p { color: rgba(255,255,255,.55); font-weight: 300; margin-top: 1rem; }
+
+    .timeline-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      position: relative;
+    }
+
+    .timeline-step {
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(184,154,106,.3);
+    }
+
+    .step-num {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(184,154,106,.25);
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+    .step-title {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: .6rem;
+    }
+    .step-desc {
+      font-size: .875rem;
+      color: rgba(255,255,255,.5);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── GALLERY ── */
+    #gallery {
+      padding: 6rem 8vw;
+    }
+    .gallery-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 260px 260px;
+      gap: 8px;
+    }
+    .gallery-item {
+      overflow: hidden;
+      position: relative;
+      background: var(--light);
+    }
+    .gallery-item:first-child { grid-row: 1 / 3; }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+      display: block;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item .caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: .8rem 1rem;
+      background: linear-gradient(transparent, rgba(44,44,44,.7));
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .9rem;
+      color: var(--white);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .gallery-item:hover .caption { opacity: 1; }
+
+    /* Placeholder colored boxes for gallery when images aren't available */
+    .gallery-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .gp-1 { background: linear-gradient(135deg, #D9B8A8 0%, #C4A08A 100%); }
+    .gp-2 { background: linear-gradient(135deg, #7A8C72 0%, #9AAB92 100%); }
+    .gp-3 { background: linear-gradient(135deg, #B89A6A 0%, #C9AE86 100%); }
+    .gp-4 { background: linear-gradient(135deg, #2C2C2C 0%, #4A4A4A 100%); color: rgba(255,255,255,.5); }
+    .gp-5 { background: linear-gradient(135deg, #D9C0B8 0%, #E8D5CB 100%); }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials {
+      padding: 6rem 8vw;
+      background: var(--light);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .testimonial-card {
+      background: var(--white);
+      padding: 2.2rem;
+      border-left: 2px solid var(--gold);
+    }
+    .testimonial-quote {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--charcoal);
+      margin-bottom: 1.5rem;
+    }
+    .testimonial-quote::before { content: '\201C'; color: var(--gold); font-size: 1.4rem; }
+    .testimonial-quote::after  { content: '\201D'; color: var(--gold); font-size: 1.4rem; }
+    .testimonial-author {
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--blush);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: var(--white);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .author-info .name {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--charcoal);
+    }
+    .author-info .venue {
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    /* ── PRICING ── */
+    #pricing {
+      padding: 6rem 8vw;
+    }
+    .pricing-intro { max-width: 480px; margin-bottom: 3rem; }
+    .pricing-intro p { margin-top: 1rem; color: var(--muted); font-weight: 300; line-height: 1.8; }
+
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      background: var(--blush);
+      border: 1.5px solid var(--blush);
+    }
+
+    .pricing-card {
+      background: var(--ivory);
+      padding: 2.5rem 2rem;
+      position: relative;
+    }
+    .pricing-card.featured {
+      background: var(--charcoal);
+    }
+    .pricing-card.featured .plan-name,
+    .pricing-card.featured .plan-price,
+    .pricing-card.featured .plan-period,
+    .pricing-card.featured .plan-feature { color: var(--white); }
+    .pricing-card.featured .plan-desc { color: rgba(255,255,255,.5); }
+    .pricing-card.featured .plan-feature::before { color: var(--gold); }
+
+    .featured-badge {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: .2rem .5rem;
+    }
+
+    .plan-name {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--charcoal);
+      margin-bottom: .4rem;
+    }
+    .plan-desc { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; }
+    .plan-price {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--charcoal);
+      line-height: 1;
+    }
+    .plan-period { font-size: .8rem; color: var(--muted); margin-bottom: 1.8rem; }
+
+    .plan-features { list-style: none; margin-bottom: 2rem; }
+    .plan-feature {
+      font-size: .875rem;
+      color: var(--charcoal);
+      padding: .5rem 0;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+      font-weight: 300;
+    }
+    .plan-feature::before { content: '✦ '; color: var(--gold); font-size: .65rem; }
+    .plan-feature.dim { opacity: .4; }
+
+    .btn-plan {
+      display: block; width: 100%;
+      padding: .85rem;
+      text-align: center;
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: 1px solid var(--charcoal);
+      background: transparent;
+      color: var(--charcoal);
+      cursor: pointer;
+      transition: all .25s;
+      font-family: var(--sans);
+    }
+    .btn-plan:hover, .featured .btn-plan { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+    .featured .btn-plan { background: var(--gold); border-color: var(--gold); color: var(--white); }
+    .featured .btn-plan:hover { background: var(--white); color: var(--charcoal); border-color: var(--white); }
+
+    /* ── BUDGET CALCULATOR ── */
+    #calculator {
+      padding: 6rem 8vw;
+      background: var(--charcoal);
+      color: var(--white);
+    }
+    #calculator .section-title { color: var(--white); }
+    #calculator .section-title em { color: var(--gold); }
+
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    .calc-label {
+      font-size: .78rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      display: block;
+      margin-bottom: .5rem;
+    }
+
+    .calc-row { margin-bottom: 1.4rem; }
+
+    .calc-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 2px;
+      background: rgba(255,255,255,.15);
+      outline: none;
+      margin-bottom: .4rem;
+      accent-color: var(--gold);
+    }
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+
+    .calc-value {
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .calc-result {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(184,154,106,.2);
+      padding: 2rem;
+      display: flex; flex-direction: column;
+    }
+
+    .result-label {
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      margin-bottom: .75rem;
+    }
+
+    .result-total {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .result-breakdown { list-style: none; flex: 1; }
+    .result-breakdown li {
+      display: flex; justify-content: space-between;
+      font-size: .85rem;
+      padding: .6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      color: rgba(255,255,255,.6);
+      font-weight: 300;
+    }
+    .result-breakdown li span { color: var(--white); font-weight: 400; }
+
+    .calc-cta {
+      margin-top: 1.5rem;
+      padding: .85rem;
+      background: var(--gold);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .25s;
+      width: 100%;
+    }
+    .calc-cta:hover { background: var(--blush); color: var(--charcoal); }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 6rem 8vw;
+    }
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      margin-top: 3rem;
+    }
+
+    .contact-info p {
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .contact-detail {
+      display: flex; gap: 1rem; align-items: flex-start;
+      margin-bottom: 1.2rem;
+    }
+    .contact-detail .icon { color: var(--gold); font-size: 1rem; flex-shrink: 0; margin-top: .15rem; }
+    .contact-detail .txt { font-size: .9rem; color: var(--charcoal); line-height: 1.5; }
+    .contact-detail .txt strong { display: block; font-weight: 500; margin-bottom: .1rem; }
+
+    .form-row { margin-bottom: 1.3rem; }
+    .form-row label {
+      display: block;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .45rem;
+    }
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      width: 100%;
+      padding: .85rem 1rem;
+      background: var(--light);
+      border: 1px solid transparent;
+      font-family: var(--sans);
+      font-size: .9rem;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color .2s;
+      resize: vertical;
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus { border-color: var(--gold); }
+    .form-row textarea { min-height: 110px; }
+
+    .form-row-double {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-submit {
+      padding: .9rem 2.4rem;
+      background: var(--gold);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .82rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .25s;
+    }
+    .btn-submit:hover { background: var(--charcoal); }
+
+    .form-success {
+      display: none;
+      background: var(--light);
+      border-left: 2px solid var(--sage);
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--sage);
+      font-size: 1rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1A1A1A;
+      color: rgba(255,255,255,.5);
+      padding: 3.5rem 8vw 2rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-brand .nav-logo { display: inline-block; margin-bottom: 1rem; }
+    .footer-brand p {
+      font-size: .85rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+    .footer-col h4 {
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.8);
+      margin-bottom: 1.2rem;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: .6rem; }
+    .footer-col ul li a {
+      font-size: .85rem;
+      color: rgba(255,255,255,.45);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-bottom {
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .75rem;
+    }
+    .social-links { display: flex; gap: 1rem; }
+    .social-links a {
+      color: rgba(255,255,255,.4);
+      font-size: .8rem;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .social-links a:hover { color: var(--gold); }
+
+    /* ── BACK TO TOP ── */
+    #back-top {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      width: 44px; height: 44px;
+      background: var(--gold);
+      color: var(--white);
+      border: none; cursor: pointer;
+      font-size: 1.1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+      z-index: 50;
+    }
+    #back-top.visible { opacity: 1; pointer-events: auto; }
+    #back-top:hover { background: var(--charcoal); }
+
+    /* ── MOBILE NAV DRAWER ── */
+    .mobile-menu {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--ivory);
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--charcoal);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute; top: 1.5rem; right: 5vw;
+      font-size: 1.8rem;
+      background: none; border: none;
+      color: var(--charcoal); cursor: pointer;
+    }
+    .hero h1{
+  opacity:0;
+  transform:translateY(20px);
+  animation:heroText 1.2s ease forwards;
+}
+
+.hero p{
+  opacity:0;
+  transform:translateY(20px);
+  animation:heroText 1.5s ease forwards;
+}
+.card img,
+.portfolio img{
+  transition:0.6s ease;
+}
+
+.card:hover img,
+.portfolio img:hover{
+  transform:scale(1.08);
+  filter:brightness(0.9);
+}
+.card{
+  transition:0.5s ease;
+}
+
+.card:hover{
+  transform:translateY(-12px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.12);
+}
+nav a{
+  position:relative;
+}
+
+nav a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-6px;
+  width:0;
+  height:2px;
+  background:#c8a36a;
+  transition:0.4s ease;
+}
+
+nav a:hover::after{
+  width:100%;
+}
+button,
+.btn{
+  transition:0.4s ease;
+}
+
+button:hover,
+.btn:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+input, textarea, select{
+  transition:0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  outline:none;
+  border:1px solid #c8a36a;
+  box-shadow:0 0 12px rgba(200,163,106,0.25);
+}
+.top-btn{
+  transition:0.4s ease;
+  opacity:0;
+  visibility:hidden;
+}
+
+.top-btn.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.top-btn:hover{
+  transform:translateY(-6px) rotate(180deg);
+}
+.pricing-card{
+  transition:0.5s ease;
+}
+
+.pricing-card:hover{
+  transform:scale(1.05);
+  border-color:#c8a36a;
+}
+.section-title h2{
+  position:relative;
+  display:inline-block;
+}
+
+.section-title h2::after{
+  content:"";
+  width:0;
+  height:2px;
+  background:#c8a36a;
+  position:absolute;
+  left:0;
+  bottom:-8px;
+  transition:0.6s ease;
+}
+
+.section-title.reveal.active h2::after{
+  width:100%;
+}
+body{
+  animation:pageLoad 0.8s ease;
+}
+
+@keyframes pageLoad{
+  from{
+    opacity:0;
+  }
+  to{
+    opacity:1;
+  }
+}
+@keyframes heroText{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-text { padding: 5rem 6vw 3rem; }
+      .hero-visual { height: 50vw; min-height: 280px; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: auto; }
+      .calc-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .contact-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+    @media (max-width: 580px) {
+      #hero, #services, #timeline, #gallery, #testimonials, #pricing, #calculator, #contact { padding-left: 5vw; padding-right: 5vw; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .form-row-double { grid-template-columns: 1fr; }
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-in {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in { opacity: 1; transform: none; transition: none; }
+    }
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f8f5f1;
+}
+
+.services{
+    width:90%;
+    margin:80px auto;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.section-title h2{
+    font-size:42px;
+    color:#4d2c2c;
+    margin-bottom:15px;
+    font-family:Georgia, serif;
+}
+
+.section-title p{
+    color:#777;
+    max-width:700px;
+    margin:auto;
+    line-height:1.8;
+}
+
+.services-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+}
+
+.service-card{
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.4s;
+}
+
+.service-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 18px 35px rgba(0,0,0,.15);
+}
+
+.service-card img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+}
+
+.content{
+    padding:25px;
+}
+
+.content h3{
+    color:#4d2c2c;
+    margin-bottom:15px;
+    font-size:24px;
+    font-family:Georgia, serif;
+}
+
+.content p{
+    color:#666;
+    line-height:1.8;
+}
+.gallery{
+    width:84%;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    grid-template-rows:260px 260px;
+    gap:10px;
+}
+
+.large-box{
+    grid-row:1 / span 2;
+    overflow:hidden;
+}
+
+.small-box{
+    overflow:hidden;
+}
+
+/* Images */
+.large-box img,
+.small-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;      /* Makes image fill the box */
+    display:block;
+    transition:0.5s ease;
+}
+
+/* Hover Effect */
+.large-box:hover img,
+.small-box:hover img{
+    transform:scale(1.08);
+}
+.large-box{
+    background:url("images/wedding1.jpg") center/cover no-repeat;
+}
+
+.small-box:nth-child(2){
+    background:url("images/wedding2.jpg") center/cover no-repeat;
+}
+
+.small-box:nth-child(3){
+    background:url("images/wedding3.jpg") center/cover no-repeat;
+}
+
+.small-box:nth-child(4){
+    background:url("images/wedding4.jpg") center/cover no-repeat;
+}
+
+.small-box:nth-child(5){
+    background:url("images/wedding5.jpg") center/cover no-repeat;
+}
+  </style>
+</head>
+<body>
+<section class="hero reveal"></section>
+<section class="services reveal"></section>
+<section class="portfolio reveal"></section>
+<section class="pricing reveal"></section>
+<section class="contact reveal"></section>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="menuClose" aria-label="Close menu">✕</button>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#gallery" onclick="closeMobile()">Portfolio</a>
+  <a href="#pricing" onclick="closeMobile()">Pricing</a>
+  <a href="#calculator" onclick="closeMobile()">Budget</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">shadi<span>st</span>udio</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Portfolio</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#calculator">Budget</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Begin Planning</a>
+  <div class="hamburger" id="hamburger" role="button" aria-label="Open menu" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Est. 2010 · Karachi & Beyond</p>
+    <h1 class="hero-title">
+      Your Love Story,<br>
+      <em>Perfectly Told.</em>
+    </h1>
+    <p class="hero-sub">
+      From intimate gatherings to grand celebrations — we compose every detail of your wedding with intention, beauty, and absolute care.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Start Your Journey</a>
+      <a href="#gallery" class="btn-ghost">View Our Work →</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <!-- Decorative SVG scene instead of a photo -->
+    <svg width="100%" height="100%" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#D9B8A8;stop-opacity:1"/>
+          <stop offset="100%" style="stop-color:#C4A08A;stop-opacity:1"/>
+        </linearGradient>
+        <linearGradient id="archGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#F9F6F0"/>
+          <stop offset="100%" style="stop-color:#E8D5C8"/>
+        </linearGradient>
+      </defs>
+      <!-- Background -->
+      <rect width="600" height="700" fill="url(#bgGrad)"/>
+
+      <!-- Floor -->
+      <rect x="0" y="550" width="600" height="150" fill="#C09070" opacity=".35"/>
+
+      <!-- Arch -->
+      <path d="M160,560 L160,220 Q160,120 300,120 Q440,120 440,220 L440,560 Z" fill="url(#archGrad)" opacity=".9"/>
+      <path d="M175,560 L175,228 Q175,138 300,138 Q425,138 425,228 L425,560 Z" fill="none" stroke="#B89A6A" stroke-width="2"/>
+
+      <!-- Floral sprigs top of arch -->
+      <g opacity=".7">
+        <!-- Left sprigs -->
+        <circle cx="185" cy="125" r="18" fill="#7A8C72" opacity=".6"/>
+        <circle cx="165" cy="145" r="12" fill="#7A8C72" opacity=".5"/>
+        <circle cx="200" cy="108" r="10" fill="#9AAB92" opacity=".6"/>
+        <circle cx="175" cy="100" r="8" fill="#B5C9A8" opacity=".5"/>
+        <circle cx="150" cy="160" r="9" fill="#7A8C72" opacity=".4"/>
+        <!-- Blooms -->
+        <circle cx="195" cy="122" r="7" fill="#D9B8A8" opacity=".9"/>
+        <circle cx="168" cy="140" r="6" fill="#F0D0C0" opacity=".9"/>
+        <circle cx="178" cy="105" r="5" fill="#E8C0B0" opacity=".9"/>
+
+        <!-- Right sprigs (mirror) -->
+        <circle cx="415" cy="125" r="18" fill="#7A8C72" opacity=".6"/>
+        <circle cx="435" cy="145" r="12" fill="#7A8C72" opacity=".5"/>
+        <circle cx="400" cy="108" r="10" fill="#9AAB92" opacity=".6"/>
+        <circle cx="425" cy="100" r="8" fill="#B5C9A8" opacity=".5"/>
+        <circle cx="450" cy="160" r="9" fill="#7A8C72" opacity=".4"/>
+        <circle cx="405" cy="122" r="7" fill="#D9B8A8" opacity=".9"/>
+        <circle cx="432" cy="140" r="6" fill="#F0D0C0" opacity=".9"/>
+        <circle cx="422" cy="105" r="5" fill="#E8C0B0" opacity=".9"/>
+      </g>
+
+      <!-- Candles -->
+      <rect x="250" y="480" width="6" height="60" fill="#F9F6F0"/>
+      <ellipse cx="253" cy="478" rx="3" ry="5" fill="#F9C74F" opacity=".9"/>
+      <rect x="344" y="490" width="6" height="50" fill="#F9F6F0"/>
+      <ellipse cx="347" cy="488" rx="3" ry="5" fill="#F9C74F" opacity=".9"/>
+
+      <!-- Couple silhouette -->
+      <!-- Partner 1 -->
+      <ellipse cx="272" cy="385" rx="18" ry="22" fill="#2C2C2C" opacity=".8"/>
+      <circle cx="272" cy="355" r="14" fill="#2C2C2C" opacity=".8"/>
+      <!-- Dress flow -->
+      <path d="M255,407 Q240,470 225,540 L320,540 Q305,470 290,407 Z" fill="#F9F6F0" opacity=".95"/>
+      <!-- Partner 2 -->
+      <rect x="310" y="362" width="34" height="90" rx="4" fill="#2C2C2C" opacity=".8"/>
+      <circle cx="327" cy="350" r="14" fill="#2C2C2C" opacity=".8"/>
+
+      <!-- Aisle runner -->
+      <rect x="240" y="540" width="120" height="20" rx="2" fill="#E8D5C8" opacity=".6"/>
+
+      <!-- Hanging lights -->
+      <line x1="160" y1="0" x2="200" y2="180" stroke="#B89A6A" stroke-width=".8" opacity=".4"/>
+      <circle cx="200" cy="182" r="3" fill="#F9C74F" opacity=".7"/>
+      <line x1="280" y1="0" x2="260" y2="140" stroke="#B89A6A" stroke-width=".8" opacity=".4"/>
+      <circle cx="260" cy="142" r="3" fill="#F9C74F" opacity=".7"/>
+      <line x1="420" y1="0" x2="390" y2="160" stroke="#B89A6A" stroke-width=".8" opacity=".4"/>
+      <circle cx="390" cy="162" r="3" fill="#F9C74F" opacity=".7"/>
+      <line x1="520" y1="0" x2="480" y2="200" stroke="#B89A6A" stroke-width=".8" opacity=".4"/>
+      <circle cx="480" cy="202" r="3" fill="#F9C74F" opacity=".7"/>
+
+      <!-- Text overlay -->
+      <text x="300" y="640" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="18" fill="#2C2C2C" opacity=".5">Where forever begins</text>
+    </svg>
+
+    <div class="hero-badge">
+      <span class="num">300+</span>
+      <span class="lbl">Weddings Crafted</span>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-intro fade-in">
+    <span class="section-label">What We Offer</span>
+    <h2 class="section-title">Every detail, <em>considered.</em></h2>
+    <p>We offer end-to-end wedding planning with the kind of careful attention that turns a celebration into a memory your guests will carry for a lifetime.</p>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK9KgYC_8MEg7oHmw_mctVaEE3Izm9Jk0bilPIlc-TJoegXLa9wDZSg98&s=10">
+      </span>
+      <h3 class="service-name">Full-Service Planning</h3>
+      <p class="service-desc">From the first vision call to the final farewell dance — we handle every element, vendor, and timeline so you can simply be present.</p>
+    </div>
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmYbwYXIvlLZd2K9YNdy2V1D37SXb7YeS0VtweoFv0QPM0TURwVkSn9PM&s=10">
+      </span>
+      <h3 class="service-name">Décor & Florals</h3>
+      <p class="service-desc">Bespoke floral installations, tablescapes, and ambient lighting designed around the mood and palette that is uniquely yours.</p>
+    </div>
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt0plGbaQBF2WMxRRfaMW0wVqtIF0H7emNP6p9kx_7IocxtlwoKlYCxdQ&s=10"></span>
+      <h3 class="service-name">Catering & Menu</h3>
+      <p class="service-desc">Curated menus from top culinary partners — from traditional Walima feasts to fusion tasting experiences.</p>
+    </div>
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwHPKm6AnJ04KhUijs5vHYUBPA5Wb6opK4XAU9LbzcHmx95Mzadf-GXgLV&s=10"></span>
+      <h3 class="service-name">Photography & Film</h3>
+      <p class="service-desc">A roster of artisan photographers and videographers who understand light, emotion, and the quiet moments that matter most.</p>
+    </div>
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://veeteraudios.com/wp-content/uploads/2025/07/hall-entertainment-system-1024x683.jpg"></span>
+      <h3 class="service-name">Entertainment</h3>
+      <p class="service-desc">Live orchestras, Sufi nights, DJ sets, and bespoke sound experiences tailored to your vision and your guests.</p>
+    </div>
+    <div class="service-card fade-in">
+      <span class="service-icon">
+        <img src="https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dHJhdmVsfGVufDB8fDB8fHww"></span>
+      <h3 class="service-name">Destination Weddings</h3>
+      <p class="service-desc">We travel wherever love takes you — from Lahore's heritage havelis to the beaches of Sri Lanka and beyond.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="timeline-intro fade-in">
+    <span class="section-label" style="color:var(--gold)">How It Works</span>
+    <h2 class="section-title">Your planning <em>journey.</em></h2>
+    <p>A clear, calm process designed to make planning feel like a pleasure — not a project.</p>
+  </div>
+  <div class="timeline-steps">
+    <div class="timeline-step fade-in">
+      <div class="step-num">01</div>
+      <h3 class="step-title">Discovery Call</h3>
+      <p class="step-desc">We learn your story, your style, and your non-negotiables in a relaxed conversation — no forms, no pressure.</p>
+    </div>
+    <div class="timeline-step fade-in">
+      <div class="step-num">02</div>
+      <h3 class="step-title">Vision & Budget</h3>
+      <p class="step-desc">We translate your ideas into a clear concept, a realistic budget, and a shortlist of vendors who match your aesthetic.</p>
+    </div>
+    <div class="timeline-step fade-in">
+      <div class="step-num">03</div>
+      <h3 class="step-title">Vendor Curation</h3>
+      <p class="step-desc">We negotiate, book, and manage every vendor — from the venue to the dessert cart — on your behalf.</p>
+    </div>
+    <div class="timeline-step fade-in">
+      <div class="step-num">04</div>
+      <h3 class="step-title">Day-of Execution</h3>
+      <p class="step-desc">Our team is on-site from dawn until the last guest leaves, so you experience the day without running it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="gallery-header fade-in">
+    <div>
+      <span class="section-label">Portfolio</span>
+      <h2 class="section-title">Moments we've <em>composed.</em></h2>
+    </div>
+    <a href="#contact" class="btn-ghost">See Full Portfolio →</a>
+  </div>
+  <div class="gallery-grid fade-in">
+    <div class="gallery-item">
+      <div class="gallery-placeholder gp-1">
+        <img src="https://www.brides.com/thmb/EoR5RoxcJ6ZsfVkrTeB1OqT5qpE=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(532x0:534x2):format(webp)/Main-Hindu-Wedding-Traditions-Stephanie-Velez-6cf14a902ea947c09dc0722d29a9224a.jpg">
+      </div>
+
+      <div class="caption">The Grand Ballroom, Karachi — 2024</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder gp-2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg-FUUnzscfebBvTGoDBYJtYGYX7RBpUkfio9YLD2tfc0dNEb6Q8P3Mg&s=10">
+      </div>
+      <div class="caption">Lahore Heritage Garden — 2024</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder gp-3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR1ZdyutiYDb4acgAelZJRXY4_O6TRhQRAuQTKgmBHHA&s=10">
+      </div>
+      <div class="caption">Custom Installation</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder gp-4">
+        <img src="https://ellebeedesign.co.uk/cdn/shop/files/Charlotte2026-EveningInvite2.jpg?v=1761242135&width=2000"></div>
+      <div class="caption">Clifton Seafront — 2023</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder gp-5">
+        <img src="data:image/jpeg;base64,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">
+      </div>
+      <div class="caption">Bespoke Styling</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="fade-in">
+    <span class="section-label">Couples</span>
+    <h2 class="section-title">Told in their <em>own words.</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-in">
+      <p class="testimonial-quote">They turned every idea we had into something more beautiful than we imagined. Not once did we feel stressed. That alone was worth everything.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div class="author-info">
+          <div class="name">Aisha & Farhan</div>
+          <div class="venue">Karachi — March 2024</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in">
+      <p class="testimonial-quote">The florals were extraordinary, and the team managed 400 guests with such grace. Lumière treated our family like their own.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">S</div>
+        <div class="author-info">
+          <div class="name">Sara & Zain</div>
+          <div class="venue">Lahore — December 2023</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in">
+      <p class="testimonial-quote">We planned a destination wedding in Sri Lanka from abroad. The team made it feel as easy as planning something local. Absolute professionals.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">N</div>
+        <div class="author-info">
+          <div class="name">Nadia & Omar</div>
+          <div class="venue">Colombo — January 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-intro fade-in">
+    <span class="section-label">Investment</span>
+    <h2 class="section-title">Plans for every <em>celebration.</em></h2>
+    <p>Transparent, all-in pricing. No hidden vendor fees, no surprise add-ons. What you see is what you invest in your day.</p>
+  </div>
+  <div class="pricing-cards fade-in">
+    <div class="pricing-card">
+      <div class="plan-name">Essentials</div>
+      <div class="plan-desc">For intimate ceremonies up to 100 guests</div>
+      <div class="plan-price">₨ 2.5L</div>
+      <div class="plan-period">starting package</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Discovery & vision session</li>
+        <li class="plan-feature">Vendor shortlisting (3 categories)</li>
+        <li class="plan-feature">Day-of coordination (8 hrs)</li>
+        <li class="plan-feature">Timeline & run-of-show</li>
+        <li class="plan-feature dim">Décor design</li>
+        <li class="plan-feature dim">Destination support</li>
+      </ul>
+      <button class="btn-plan" onclick="scrollToContact('Essentials')">Enquire Now</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="featured-badge">Most Popular</div>
+      <div class="plan-name">Signature</div>
+      <div class="plan-desc">Full-service planning for 100–300 guests</div>
+      <div class="plan-price">₨ 7.5L</div>
+      <div class="plan-period">starting package</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Everything in Essentials</li>
+        <li class="plan-feature">Complete vendor management</li>
+        <li class="plan-feature">Custom décor & florals</li>
+        <li class="plan-feature">2-day event coordination</li>
+        <li class="plan-feature">Guest experience curation</li>
+        <li class="plan-feature dim">Destination support</li>
+      </ul>
+      <button class="btn-plan" onclick="scrollToContact('Signature')">Enquire Now</button>
+    </div>
+    <div class="pricing-card">
+      <div class="plan-name">Grand</div>
+      <div class="plan-desc">Multi-day events & destination weddings</div>
+      <div class="plan-price">Custom</div>
+      <div class="plan-period">tailored to your vision</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Everything in Signature</li>
+        <li class="plan-feature">Multi-function coordination</li>
+        <li class="plan-feature">Destination logistics</li>
+        <li class="plan-feature">Dedicated senior planner</li>
+        <li class="plan-feature">Guest hotel management</li>
+        <li class="plan-feature">Post-wedding services</li>
+      </ul>
+      <button class="btn-plan" onclick="scrollToContact('Grand')">Request Proposal</button>
+    </div>
+  </div>
+</section>
+
+<!-- BUDGET CALCULATOR -->
+<section id="calculator">
+  <div class="fade-in">
+    <span class="section-label" style="color:var(--gold)">Budget Tool</span>
+    <h2 class="section-title">Estimate your <em>investment.</em></h2>
+  </div>
+  <div class="calc-layout">
+    <div class="calc-sliders fade-in">
+      <div class="calc-row">
+        <label class="calc-label">Number of Guests</label>
+        <input type="range" class="calc-slider" id="guests" min="50" max="600" value="200" step="10">
+        <div class="calc-value" id="guestsVal">200 guests</div>
+      </div>
+      <div class="calc-row">
+        <label class="calc-label">Venue Budget (₨ Lakhs)</label>
+        <input type="range" class="calc-slider" id="venue" min="1" max="30" value="8" step="0.5">
+        <div class="calc-value" id="venueVal">₨ 8L</div>
+      </div>
+      <div class="calc-row">
+        <label class="calc-label">Catering Per Head (₨)</label>
+        <input type="range" class="calc-slider" id="catering" min="1500" max="8000" value="3000" step="250">
+        <div class="calc-value" id="cateringVal">₨ 3,000 / head</div>
+      </div>
+      <div class="calc-row">
+        <label class="calc-label">Photography & Film (₨ Lakhs)</label>
+        <input type="range" class="calc-slider" id="photo" min="0.5" max="10" value="2.5" step="0.25">
+        <div class="calc-value" id="photoVal">₨ 2.5L</div>
+      </div>
+      <div class="calc-row">
+        <label class="calc-label">Décor & Florals (₨ Lakhs)</label>
+        <input type="range" class="calc-slider" id="decor" min="1" max="20" value="4" step="0.5">
+        <div class="calc-value" id="decorVal">₨ 4L</div>
+      </div>
+    </div>
+    <div class="calc-result fade-in">
+      <div class="result-label">Estimated Total Budget</div>
+      <div class="result-total" id="totalBudget">₨ 0</div>
+      <ul class="result-breakdown">
+        <li>Venue <span id="r-venue">—</span></li>
+        <li>Catering <span id="r-catering">—</span></li>
+        <li>Photography <span id="r-photo">—</span></li>
+        <li>Décor & Florals <span id="r-decor">—</span></li>
+        <li>Planning Fee (est.) <span id="r-planning">—</span></li>
+        <li>Misc & Contingency (10%) <span id="r-misc">—</span></li>
+      </ul>
+      <button class="calc-cta" onclick="scrollToContact('Budget Enquiry')">Get an Exact Quote</button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-layout">
+    <div class="contact-info fade-in">
+      <span class="section-label">Get in Touch</span>
+      <h2 class="section-title">Let's begin your <em>story.</em></h2>
+      <p>Whether your wedding is six months or two years away, the best time to start is now. Reach out and we'll schedule a complimentary discovery call.</p>
+      <div class="contact-detail">
+        <span class="icon">📍</span>
+        <div class="txt">
+          <strong>Studio</strong>
+          Clifton Block 5, Karachi, Pakistan
+        </div>
+      </div>
+      <div class="contact-detail">
+        <span class="icon">📞</span>
+        <div class="txt">
+          <strong>Phone</strong>
+          +92 300 000 0000
+        </div>
+      </div>
+      <div class="contact-detail">
+        <span class="icon">✉️</span>
+        <div class="txt">
+          <strong>Email</strong>
+          hello@lumiereweddings.pk
+        </div>
+      </div>
+      <div class="contact-detail">
+        <span class="icon">🕐</span>
+        <div class="txt">
+          <strong>Hours</strong>
+          Mon–Sat, 10 am – 7 pm
+        </div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="form-row-double">
+          <div class="form-row">
+            <label>Your Name</label>
+            <input type="text" id="fname" placeholder="Sara Khan" required>
+          </div>
+          <div class="form-row">
+            <label>Partner's Name</label>
+            <input type="text" id="pname" placeholder="Zain Malik">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="sara@example.com" required>
+        </div>
+        <div class="form-row-double">
+          <div class="form-row">
+            <label>Wedding Date</label>
+            <input type="date" id="wdate">
+          </div>
+          <div class="form-row">
+            <label>Guest Count</label>
+            <input type="number" id="gcount" placeholder="200" min="1">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Package Interest</label>
+          <select id="package">
+            <option value="">Select a package</option>
+            <option value="Essentials">Essentials</option>
+            <option value="Signature">Signature</option>
+            <option value="Grand">Grand / Destination</option>
+            <option value="Custom">Not sure yet</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Tell us about your vision</label>
+          <textarea id="message" placeholder="Dream venue, colour palette, vibe — anything that comes to mind..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Send My Enquiry</button>
+        <div class="form-success" id="formSuccess">
+          ✦ Thank you — we'll be in touch within 24 hours to arrange your discovery call.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="color:rgba(255,255,255,.8)">Lumi<span>è</span>re</a>
+      <p>Creating extraordinary weddings across Pakistan and beyond since 2010. Every couple, every story, every detail — handled with love.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Full Planning</a></li>
+        <li><a href="#services">Décor & Florals</a></li>
+        <li><a href="#services">Catering</a></li>
+        <li><a href="#services">Photography</a></li>
+        <li><a href="#services">Destination</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#gallery">Portfolio</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Karachi Studio</a></li>
+        <li><a href="#">+92 300 000 0000</a></li>
+        <li><a href="#">hello@lumiereweddings.pk</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Pinterest</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Lumière Weddings. All rights reserved.</span>
+    <div class="social-links">
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+      <a href="#">Pinterest</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<script>
+
+  const elements = document.querySelectorAll(".reveal");
+
+window.addEventListener("scroll", () => {
+  elements.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    const windowHeight = window.innerHeight;
+
+    if(top < windowHeight - 120){
+      el.classList.add("active");
+    }
+  });
+});
+  /* ── NAV SCROLL ── */
+  const navbar = document.getElementById('navbar');
+  const backTop = document.getElementById('back-top');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+    backTop.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  /* ── MOBILE MENU ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose  = document.getElementById('menuClose');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  hamburger.addEventListener('keydown', e => { if(e.key==='Enter') mobileMenu.classList.add('open'); });
+  menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  /* ── FADE-IN ON SCROLL ── */
+  const faders = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  faders.forEach(f => observer.observe(f));
+
+  /* ── BUDGET CALCULATOR ── */
+  function fmt(n) {
+    if(n >= 100000) return '₨ ' + (n/100000).toFixed(1) + 'L';
+    return '₨ ' + n.toLocaleString('en-PK');
+  }
+
+  function updateCalc() {
+    const guests   = +document.getElementById('guests').value;
+    const venue    = +document.getElementById('venue').value * 100000;
+    const catering = +document.getElementById('catering').value * guests;
+    const photo    = +document.getElementById('photo').value * 100000;
+    const decor    = +document.getElementById('decor').value * 100000;
+
+    document.getElementById('guestsVal').textContent  = guests + ' guests';
+    document.getElementById('venueVal').textContent   = fmt(venue);
+    document.getElementById('cateringVal').textContent= '₨ ' + (+document.getElementById('catering').value).toLocaleString() + ' / head';
+    document.getElementById('photoVal').textContent   = fmt(photo);
+    document.getElementById('decorVal').textContent   = fmt(decor);
+
+    const planning = guests <= 100 ? 250000 : guests <= 300 ? 750000 : 1200000;
+    const subtotal = venue + catering + photo + decor + planning;
+    const misc     = subtotal * 0.1;
+    const total    = subtotal + misc;
+
+    document.getElementById('r-venue').textContent    = fmt(venue);
+    document.getElementById('r-catering').textContent = fmt(catering);
+    document.getElementById('r-photo').textContent    = fmt(photo);
+    document.getElementById('r-decor').textContent    = fmt(decor);
+    document.getElementById('r-planning').textContent = fmt(planning);
+    document.getElementById('r-misc').textContent     = fmt(misc);
+    document.getElementById('totalBudget').textContent= fmt(total);
+  }
+
+  ['guests','venue','catering','photo','decor'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateCalc);
+  });
+  updateCalc();
+
+  /* ── CONTACT FORM ── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-submit');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('formSuccess').style.display = 'block';
+      btn.textContent = 'Sent ✓';
+      e.target.reset();
+    }, 1200);
+  }
+
+  function scrollToContact(pkg) {
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    if(pkg) {
+      setTimeout(() => {
+        const sel = document.getElementById('package');
+        for(let opt of sel.options) {
+          if(opt.text.toLowerCase().includes(pkg.toLowerCase())) { sel.value = opt.value; break; }
+        }
+      }, 600);
+    }
+  }
+  const form = document.getElementById("weddingForm");
+
+form.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let name = document.getElementById("name").value.trim();
+    let partner = document.getElementById("partner").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let date = document.getElementById("date").value;
+    let guests = document.getElementById("guests").value;
+    let pack = document.getElementById("package").value;
+    let vision = document.getElementById("vision").value.trim();
+
+    let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/i;
+    let namePattern = /^[A-Za-z ]+$/;
+
+    // Name
+    if(name==""){
+        alert("Please enter your name.");
+        return;
+    }
+
+    if(!namePattern.test(name)){
+        alert("Name should contain letters only.");
+        return;
+    }
+
+    // Partner Name
+    if(partner==""){
+        alert("Please enter partner's name.");
+        return;
+    }
+
+    if(!namePattern.test(partner)){
+        alert("Partner's name should contain letters only.");
+        return;
+    }
+
+    // Email
+    if(email==""){
+        alert("Please enter your email.");
+        return;
+    }
+
+    if(!emailPattern.test(email)){
+        alert("Please enter a valid email.");
+        return;
+    }
+
+    // Wedding Date
+    if(date==""){
+        alert("Please select your wedding date.");
+        return;
+    }
+
+    let today = new Date();
+    today.setHours(0,0,0,0);
+
+    let weddingDate = new Date(date);
+
+    if(weddingDate < today){
+        alert("Wedding date cannot be in the past.");
+        return;
+    }
+
+    // Guests
+    if(guests==""){
+        alert("Please enter guest count.");
+        return;
+    }
+
+    if(guests <= 0){
+        alert("Guest count must be greater than 0.");
+        return;
+    }
+
+    // Package
+    if(pack==""){
+        alert("Please select a package.");
+        return;
+    }
+
+    // Vision
+    if(vision.length < 20){
+        alert("Please describe your vision in at least 20 characters.");
+        return;
+    }
+
+    alert("Form submitted successfully!");
+
+    form.reset();
+
+});
+const btn = document.querySelector(".top-btn");
+
+window.addEventListener("scroll", () => {
+  if(window.scrollY > 400){
+    btn.classList.add("show");
+  }else{
+    btn.classList.remove("show");
+  }
+});
+</script>
+</body>
+</html>
